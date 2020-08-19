@@ -57,28 +57,37 @@ module.exports = {
     name: 'roll',
     description: 'This is a roll command.',
     execute(message, args) {
-        var expression = args.join('');
-        var evaluatedExpressionArray = evaluateExpressionArray(toExpressionArray(expression));
+        try {
+            args = args.map(x => x.toLowerCase());
 
-        var text = '';
+            var expression = args.join('');
+            var evaluatedExpressionArray = evaluateExpressionArray(toExpressionArray(expression));
 
-        for (let elem of evaluatedExpressionArray) {
-            if (elem.text) {
-                text += elem.text;
-            } else {
-                text += elem;
+            var text = '';
+
+            for (let elem of evaluatedExpressionArray) {
+                if (elem.text) {
+                    text += elem.text;
+                } else {
+                    text += elem;
+                }
             }
-        }
 
-        for (var i = 0; i < evaluatedExpressionArray.length; i++) {
-            if (evaluatedExpressionArray[i].sum) {
-                evaluatedExpressionArray[i] = evaluatedExpressionArray[i].sum;
+            for (var i = 0; i < evaluatedExpressionArray.length; i++) {
+                if (evaluatedExpressionArray[i].sum) {
+                    evaluatedExpressionArray[i] = evaluatedExpressionArray[i].sum;
+                }
             }
+
+            var result = eval(evaluatedExpressionArray.join(''));
+
+            if (result == null) {
+                throw 'Result is undefined';
+            }
+
+            message.channel.send(`${message.member.user}: \`${text}\` = ${result}`);
+        } catch (e) {
+            message.channel.send(`Oh dear. Something went wrong. Remember to follow this format: \`/r 2d50 + 8 + 5\` `);
         }
-
-        var result = eval(evaluatedExpressionArray.join(''));
-
-
-        message.channel.send(`${message.member.user}: \`${text}\` = ${result}`);
     }
 };
