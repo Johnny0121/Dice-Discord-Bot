@@ -9,7 +9,7 @@ const prefix = '/';
 
 const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
 for (let file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = require(`./Commands/${file}`);
     client.commands.set(command.name, command);
 }
 
